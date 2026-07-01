@@ -126,6 +126,13 @@ create policy "team_isolation" on briefings for all using (
   account_id in (select id from accounts where team_id = (select team_id from users where id = auth.uid()))
 );
 
+-- A user can always read their own row directly. This has to exist as its
+-- own non-circular policy: "own_team_select" below depends on being able to
+-- look up your own team_id, which is impossible without this policy (a user
+-- reading their own row for the first time can't yet satisfy a condition
+-- that requires already knowing their own team_id).
+create policy "own_user_select" on users for select using (id = auth.uid());
+
 -- Users can see other members of their own team (needed for team settings page),
 -- and can update their own row.
 create policy "own_team_select" on users for select using (
