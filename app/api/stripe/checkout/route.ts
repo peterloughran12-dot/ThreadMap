@@ -5,7 +5,7 @@ import { stripe } from '@/lib/stripe';
 // Not in the original spec's API list, but required to get a team from
 // free -> paid before the Stripe customer portal has anything to manage.
 export async function POST(request: Request) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

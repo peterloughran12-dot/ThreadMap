@@ -6,7 +6,7 @@ import { READY_FOR_BRIEFING_THRESHOLD } from '@/lib/constants';
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 export async function POST(request: Request) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const {
     data: { user },

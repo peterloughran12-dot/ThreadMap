@@ -12,7 +12,7 @@ function planFromPriceId(priceId: string | undefined): 'pro' | 'team' | 'free' {
 
 export async function POST(request: Request) {
   const body = await request.text();
-  const signature = headers().get('stripe-signature');
+  const signature = (await headers()).get('stripe-signature');
 
   let event: Stripe.Event;
   try {

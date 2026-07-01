@@ -4,7 +4,7 @@ import type { AccountWithProgress } from '@/lib/types';
 import AccountListClient from '@/components/AccountListClient';
 
 export default async function AccountsPage() {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   const { data: accounts } = await supabase
     .from('accounts')
