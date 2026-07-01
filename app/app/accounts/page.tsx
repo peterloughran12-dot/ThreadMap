@@ -16,9 +16,7 @@ export default async function AccountsPage() {
 
   const withProgress: AccountWithProgress[] = (accounts ?? []).map((a: any) => {
     const nonDmFunctions = (a.account_functions ?? []).filter((f: any) => !f.is_dm_node);
-    const complete = nonDmFunctions.filter((f: any) =>
-      (f.intel_notes ?? []).some((n: any) => n.is_complete)
-    ).length;
+    const complete = nonDmFunctions.filter((f: any) => f.intel_notes?.is_complete).length;
     const total = nonDmFunctions.length;
     return {
       id: a.id,

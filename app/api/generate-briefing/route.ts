@@ -52,7 +52,7 @@ export async function POST(request: Request) {
     .order('sequence_order', { ascending: true });
 
   const nonDm = (functions ?? []).filter((f: any) => !f.is_dm_node);
-  const completeCount = nonDm.filter((f: any) => f.intel_notes?.[0]?.is_complete).length;
+  const completeCount = nonDm.filter((f: any) => f.intel_notes?.is_complete).length;
   const ready = nonDm.length > 0 && completeCount / nonDm.length >= READY_FOR_BRIEFING_THRESHOLD;
 
   if (!ready) {
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
       const contactList = (f.contacts ?? [])
         .map((c: any) => `${c.full_name}${c.job_title ? ` (${c.job_title})` : ''}`)
         .join(', ');
-      const intel = f.intel_notes?.[0]?.content?.trim();
+      const intel = f.intel_notes?.content?.trim();
       return `FUNCTION: ${f.function_name}\nContacts spoken to: ${contactList || 'None logged'}\nIntel captured:\n${
         intel || 'No intel captured.'
       }`;

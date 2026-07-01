@@ -32,11 +32,11 @@ export default function FunctionDetailPanel({
   const supabase = createClient();
   const [modalOpen, setModalOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
-  const [note, setNote] = useState(fn.intel_notes?.[0]?.content ?? '');
+  const [note, setNote] = useState(fn.intel_notes?.content ?? '');
   const [savingNote, setSavingNote] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
 
-  const state = computeFunctionState((fn.contacts?.length ?? 0) > 0, !!fn.intel_notes?.[0]?.is_complete);
+  const state = computeFunctionState((fn.contacts?.length ?? 0) > 0, !!fn.intel_notes?.is_complete);
   const isComplete = note.trim().length >= INTEL_COMPLETE_MIN_CHARS;
 
   async function cycleStatus(contactId: string, current: ContactStatus) {

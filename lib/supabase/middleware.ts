@@ -35,12 +35,14 @@ export async function updateSession(request: NextRequest) {
   if (!user && isAppRoute) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
+    url.search = '';
     return NextResponse.redirect(url);
   }
 
   if (user && isAuthRoute) {
     const url = request.nextUrl.clone();
     url.pathname = '/app/accounts';
+    url.search = '';
     return NextResponse.redirect(url);
   }
 

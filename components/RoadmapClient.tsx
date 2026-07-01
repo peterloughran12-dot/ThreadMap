@@ -10,7 +10,7 @@ import ProgressRail from '@/components/ProgressRail';
 
 export type FunctionWithData = AccountFunction & {
   contacts: Contact[];
-  intel_notes: IntelNote[];
+  intel_notes: IntelNote | null;
 };
 
 export default function RoadmapClient({
@@ -30,7 +30,7 @@ export default function RoadmapClient({
   const selected = functions.find((f) => f.id === selectedId) ?? null;
 
   const { completeCount, progress, ready } = useMemo(() => {
-    const complete = nonDm.filter((f) => f.intel_notes?.[0]?.is_complete).length;
+    const complete = nonDm.filter((f) => f.intel_notes?.is_complete).length;
     const total = nonDm.length || 1;
     const p = complete / total;
     return { completeCount: complete, progress: p, ready: p >= READY_FOR_BRIEFING_THRESHOLD };
@@ -135,7 +135,7 @@ function FunctionNodeButton({
   selected: boolean;
   onClick: () => void;
 }) {
-  const intel = fn.intel_notes?.[0];
+  const intel = fn.intel_notes;
   const state = computeFunctionState((fn.contacts?.length ?? 0) > 0, !!intel?.is_complete);
 
   const stateStyles: Record<string, string> = {

@@ -16,7 +16,7 @@ export default async function BriefPage({ params }: { params: Promise<{ id: stri
     .eq('account_id', id);
 
   const nonDm = (functions ?? []).filter((f: any) => !f.is_dm_node);
-  const complete = nonDm.filter((f: any) => f.intel_notes?.[0]?.is_complete).length;
+  const complete = nonDm.filter((f: any) => f.intel_notes?.is_complete).length;
   const ready = nonDm.length > 0 && complete / nonDm.length >= READY_FOR_BRIEFING_THRESHOLD;
 
   const { data: briefings } = await supabase

@@ -70,7 +70,7 @@ export default function ProgressRail({
         <h3 className="text-xs font-semibold uppercase tracking-wide text-text-muted mb-3">Functions</h3>
         <ul className="space-y-1">
           {functions.map((f) => {
-            const intel = f.intel_notes?.[0];
+            const intel = f.intel_notes;
             const state = f.is_dm_node
               ? ready
                 ? 'complete'
