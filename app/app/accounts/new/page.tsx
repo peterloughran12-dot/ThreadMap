@@ -29,14 +29,16 @@ export default function NewAccountPage() {
       return;
     }
 
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('users')
       .select('team_id')
       .eq('id', user.id)
       .single();
 
     if (!profile?.team_id) {
-      setError('Could not find your team.');
+      setError(
+        `Could not find your team. ${profileError ? `(${profileError.code}: ${profileError.message})` : '(no row returned)'}`
+      );
       setSubmitting(false);
       return;
     }
