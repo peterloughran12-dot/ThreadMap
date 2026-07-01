@@ -12,6 +12,7 @@ import {
 import type { ContactStatus } from '@/lib/types';
 import type { FunctionWithData } from '@/components/RoadmapClient';
 import AddContactModal from '@/components/AddContactModal';
+import ImportContactsModal from '@/components/ImportContactsModal';
 
 const STATUS_PILL: Record<ContactStatus, string> = {
   new: 'bg-text-faint/20 text-text-muted',
@@ -30,6 +31,7 @@ export default function FunctionDetailPanel({
 }) {
   const supabase = createClient();
   const [modalOpen, setModalOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [note, setNote] = useState(fn.intel_notes?.[0]?.content ?? '');
   const [savingNote, setSavingNote] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
@@ -87,9 +89,14 @@ export default function FunctionDetailPanel({
           <h3 className="text-xs font-semibold uppercase tracking-wide text-text-muted">
             Contacts ({fn.contacts?.length ?? 0})
           </h3>
-          <button onClick={() => setModalOpen(true)} className="btn-ghost !px-3 !py-1 text-xs">
-            + Add contact
-          </button>
+          <div className="flex gap-2">
+            <button onClick={() => setImportOpen(true)} className="btn-ghost !px-3 !py-1 text-xs">
+              Import CSV
+            </button>
+            <button onClick={() => setModalOpen(true)} className="btn-ghost !px-3 !py-1 text-xs">
+              + Add contact
+            </button>
+          </div>
         </div>
 
         {(fn.contacts?.length ?? 0) === 0 ? (
@@ -159,6 +166,17 @@ export default function FunctionDetailPanel({
           onClose={() => setModalOpen(false)}
           onAdded={() => {
             setModalOpen(false);
+            onChanged();
+          }}
+        />
+      )}
+
+      {importOpen && (
+        <ImportContactsModal
+          functionId={fn.id}
+          onClose={() => setImportOpen(false)}
+          onImported={() => {
+            setImportOpen(false);
             onChanged();
           }}
         />
