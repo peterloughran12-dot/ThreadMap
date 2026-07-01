@@ -45,16 +45,29 @@ export type ParsedContactRow = {
   full_name: string;
   job_title: string;
   email: string;
+  phone: string;
   linkedin_url: string;
 };
 
 // Header aliases seen in real ZoomInfo / Lusha CSV exports (column naming
 // varies by export template, so we match loosely rather than requiring an
-// exact layout).
+// exact layout). Listed in priority order where it matters (e.g. a direct/
+// mobile number is more useful for dialing an individual than a shared
+// company switchboard number, so those are checked first).
 const HEADER_ALIASES: Record<keyof ParsedContactRow, string[]> = {
   full_name: ['full name', 'name', 'contact name'],
   job_title: ['job title', 'title', 'position', 'job function'],
   email: ['email', 'email address', 'work email', 'business email'],
+  phone: [
+    'direct phone number',
+    'direct phone',
+    'mobile phone',
+    'mobile number',
+    'cell phone',
+    'phone number',
+    'phone',
+    'work phone',
+  ],
   linkedin_url: [
     'linkedin url',
     'linkedin',
@@ -74,8 +87,15 @@ export function mapRowsToContacts(rows: string[][]): ParsedContactRow[] {
   if (rows.length < 2) return [];
   const headers = rows[0].map(normalizeHeader);
 
+  // Checks aliases in priority order, not header order, so e.g. a "Direct
+  // Phone" column wins over a "Phone" column regardless of which appears
+  // first in the file.
   function findColumn(aliases: string[]) {
-    return headers.findIndex((h) => aliases.includes(h));
+    for (const alias of aliases) {
+      const idx = headers.indexOf(alias);
+      if (idx >= 0) return idx;
+    }
+    return -1;
   }
 
   const fullNameCol = findColumn(HEADER_ALIASES.full_name);
@@ -83,6 +103,7 @@ export function mapRowsToContacts(rows: string[][]): ParsedContactRow[] {
   const lastNameCol = findColumn(LAST_NAME_ALIASES);
   const jobTitleCol = findColumn(HEADER_ALIASES.job_title);
   const emailCol = findColumn(HEADER_ALIASES.email);
+  const phoneCol = findColumn(HEADER_ALIASES.phone);
   const linkedinCol = findColumn(HEADER_ALIASES.linkedin_url);
 
   return rows.slice(1).map((r) => {
@@ -97,6 +118,7 @@ export function mapRowsToContacts(rows: string[][]): ParsedContactRow[] {
       full_name: fullName,
       job_title: jobTitleCol >= 0 ? (r[jobTitleCol] ?? '').trim() : '',
       email: emailCol >= 0 ? (r[emailCol] ?? '').trim() : '',
+      phone: phoneCol >= 0 ? (r[phoneCol] ?? '').trim() : '',
       linkedin_url: linkedinCol >= 0 ? (r[linkedinCol] ?? '').trim() : '',
     };
   });

@@ -53,6 +53,7 @@ create table contacts (
   full_name text not null,
   job_title text,
   email text,
+  phone text,
   linkedin_url text,
   source text, -- ZoomInfo | Lusha | LinkedIn | Referral
   status text not null default 'new', -- new | contacted | intel_captured

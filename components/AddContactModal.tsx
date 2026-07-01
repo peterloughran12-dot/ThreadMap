@@ -17,6 +17,7 @@ export default function AddContactModal({
   const [fullName, setFullName] = useState('');
   const [jobTitle, setJobTitle] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [linkedinUrl, setLinkedinUrl] = useState('');
   const [source, setSource] = useState<(typeof CONTACT_SOURCES)[number]>('ZoomInfo');
   const [saving, setSaving] = useState(false);
@@ -31,6 +32,7 @@ export default function AddContactModal({
       full_name: fullName,
       job_title: jobTitle || null,
       email: email || null,
+      phone: phone || null,
       linkedin_url: linkedinUrl || null,
       source,
     });
@@ -67,6 +69,16 @@ export default function AddContactModal({
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              className="input"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-text-muted mb-1.5">Phone (optional)</label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="+1 555 123 4567"
               className="input"
             />
           </div>

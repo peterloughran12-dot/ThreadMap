@@ -69,6 +69,7 @@ export default function ImportAccountContactsModal({
         full_name: r.full_name,
         job_title: r.job_title || null,
         email: r.email || null,
+        phone: r.phone || null,
         linkedin_url: r.linkedin_url || null,
         source,
       }));

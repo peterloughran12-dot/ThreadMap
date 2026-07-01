@@ -29,6 +29,7 @@ export interface Contact {
   full_name: string;
   job_title: string | null;
   email: string | null;
+  phone: string | null;
   linkedin_url: string | null;
   source: string | null;
   status: ContactStatus;

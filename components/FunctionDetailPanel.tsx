@@ -117,7 +117,16 @@ export default function FunctionDetailPanel({
                     ✕
                   </button>
                 </div>
-                <p className="text-xs text-text-muted truncate mb-2">{c.job_title || 'No title'}</p>
+                <p className="text-xs text-text-muted truncate mb-1">{c.job_title || 'No title'}</p>
+                {c.phone && (
+                  <a
+                    href={`tel:${c.phone}`}
+                    className="block text-xs text-indigo hover:underline truncate mb-2"
+                    title="Click to dial"
+                  >
+                    📞 {c.phone}
+                  </a>
+                )}
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] text-text-faint">{c.source}</span>
                   <button
