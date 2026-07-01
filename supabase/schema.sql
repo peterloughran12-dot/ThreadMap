@@ -98,55 +98,70 @@ alter table intel_notes enable row level security;
 alter table activity_log enable row level security;
 alter table briefings enable row level security;
 
+-- Looks up the current user's team_id. This has to be a SECURITY DEFINER
+-- function rather than an inline subquery: every policy below needs "what
+-- team is this user on", and a plain subquery like
+-- `select team_id from users where id = auth.uid()` re-triggers users'
+-- own RLS policies while evaluating itself, which Postgres detects as
+-- infinite recursion (error 42P17) and refuses to run at all - for every
+-- table below, not just users. SECURITY DEFINER runs this lookup with the
+-- function owner's privileges, bypassing RLS for just this one read.
+create or replace function public.current_user_team_id()
+returns uuid
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select team_id from public.users where id = auth.uid()
+$$;
+
 -- Users can only see their own team's data
 create policy "team_isolation" on accounts for all using (
-  team_id = (select team_id from users where id = auth.uid())
+  team_id = public.current_user_team_id()
 );
 create policy "team_isolation" on account_functions for all using (
-  account_id in (select id from accounts where team_id = (select team_id from users where id = auth.uid()))
+  account_id in (select id from accounts where team_id = public.current_user_team_id())
 );
 create policy "team_isolation" on contacts for all using (
   function_id in (select id from account_functions where account_id in (
-    select id from accounts where team_id = (select team_id from users where id = auth.uid())
+    select id from accounts where team_id = public.current_user_team_id()
   ))
 );
 create policy "team_isolation" on intel_notes for all using (
   function_id in (select id from account_functions where account_id in (
-    select id from accounts where team_id = (select team_id from users where id = auth.uid())
+    select id from accounts where team_id = public.current_user_team_id()
   ))
 );
 create policy "team_isolation" on activity_log for all using (
   contact_id in (select id from contacts where function_id in (
     select id from account_functions where account_id in (
-      select id from accounts where team_id = (select team_id from users where id = auth.uid())
+      select id from accounts where team_id = public.current_user_team_id()
     )
   ))
 );
 create policy "team_isolation" on briefings for all using (
-  account_id in (select id from accounts where team_id = (select team_id from users where id = auth.uid()))
+  account_id in (select id from accounts where team_id = public.current_user_team_id())
 );
 
--- A user can always read their own row directly. This has to exist as its
--- own non-circular policy: "own_team_select" below depends on being able to
--- look up your own team_id, which is impossible without this policy (a user
--- reading their own row for the first time can't yet satisfy a condition
--- that requires already knowing their own team_id).
+-- A user can always read their own row directly (a plain, non-recursive
+-- base case - doesn't need the function above).
 create policy "own_user_select" on users for select using (id = auth.uid());
 
 -- Users can see other members of their own team (needed for team settings page),
 -- and can update their own row.
 create policy "own_team_select" on users for select using (
-  team_id = (select team_id from users where id = auth.uid())
+  team_id = public.current_user_team_id()
 );
 create policy "own_user_update" on users for update using (id = auth.uid());
 create policy "own_user_insert" on users for insert with check (id = auth.uid());
 
 -- A user can read/update their own team's row.
 create policy "team_select" on teams for select using (
-  id = (select team_id from users where id = auth.uid())
+  id = public.current_user_team_id()
 );
 create policy "team_update" on teams for update using (
-  id = (select team_id from users where id = auth.uid())
+  id = public.current_user_team_id()
 );
 create policy "team_insert" on teams for insert with check (true);
 
