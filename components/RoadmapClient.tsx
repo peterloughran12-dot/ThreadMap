@@ -7,6 +7,7 @@ import type { Account, AccountFunction, Contact, IntelNote } from '@/lib/types';
 import { READY_FOR_BRIEFING_THRESHOLD, computeFunctionState } from '@/lib/constants';
 import FunctionDetailPanel from '@/components/FunctionDetailPanel';
 import ProgressRail from '@/components/ProgressRail';
+import ImportAccountContactsModal from '@/components/ImportAccountContactsModal';
 
 export type FunctionWithData = AccountFunction & {
   contacts: Contact[];
@@ -27,6 +28,7 @@ export default function RoadmapClient({
   const dmNode = functions.find((f) => f.is_dm_node);
 
   const [selectedId, setSelectedId] = useState<string | null>(nonDm[0]?.id ?? dmNode?.id ?? null);
+  const [importOpen, setImportOpen] = useState(false);
   const selected = functions.find((f) => f.id === selectedId) ?? null;
 
   const { completeCount, progress, ready } = useMemo(() => {
@@ -50,6 +52,9 @@ export default function RoadmapClient({
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <button onClick={() => setImportOpen(true)} className="btn-ghost">
+            Import CSV
+          </button>
           <div className="text-right">
             <div className="text-xs text-text-muted mb-1">Progress</div>
             <div className="flex items-center gap-2">
@@ -122,6 +127,21 @@ export default function RoadmapClient({
           onSelect={setSelectedId}
         />
       </div>
+
+      {importOpen && (
+        <ImportAccountContactsModal
+          functions={functions.map((f) => ({
+            id: f.id,
+            function_name: f.function_name,
+            is_dm_node: f.is_dm_node,
+          }))}
+          onClose={() => setImportOpen(false)}
+          onImported={() => {
+            setImportOpen(false);
+            router.refresh();
+          }}
+        />
+      )}
     </div>
   );
 }

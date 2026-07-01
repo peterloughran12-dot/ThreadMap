@@ -53,6 +53,39 @@ export function buildHierarchyLevels(
   return [...rungs, { name: dmRole || `VP of ${vertical}`, emoji: DM_NODE_EMOJI, isDm: true }];
 }
 
+// Generic seniority signal from a job title, independent of any one
+// vertical's exact titles - used to auto-place imported contacts onto the
+// right rung of an account's hierarchy. Rank 4 is reserved for genuine
+// decision-maker-tier titles (VP/C-suite/President); everything else (0-3)
+// lines up with HIERARCHY_RUNGS above (Coordinator..Director).
+const SENIORITY_TIERS: { rank: number; pattern: RegExp }[] = [
+  { rank: 4, pattern: /\b(chief|ceo|cfo|coo|cto|ciso|president|vice president|\bvp\b|evp|svp)\b/i },
+  { rank: 3, pattern: /\b(senior director|director|head of)\b/i },
+  { rank: 2, pattern: /\b(senior manager|manager)\b/i },
+  { rank: 1, pattern: /\b(supervisor|team lead|lead)\b/i },
+  { rank: 0, pattern: /\b(coordinator|specialist|associate|analyst|assistant|representative|intern|technician|clerk)\b/i },
+];
+export const MAX_SENIORITY_RANK = 4;
+
+export function matchSeniorityRank(jobTitle: string): number | null {
+  if (!jobTitle) return null;
+  for (const tier of SENIORITY_TIERS) {
+    if (tier.pattern.test(jobTitle)) return tier.rank;
+  }
+  return null;
+}
+
+// Given a contact's seniority rank and an account's actual (ordered,
+// bottom-up) function list, pick which function they most likely belong to.
+// Non-DM ranks clamp to the most senior non-DM rung available, since a
+// shorter hierarchy (e.g. 2 levels) may not have a rung for every rank -
+// only an exact rank-4 (VP/C-suite) match is ever placed on the DM node.
+export function suggestFunctionIndex(rank: number | null, nonDmCount: number): number | null {
+  if (rank === null || nonDmCount === 0) return null;
+  if (rank >= MAX_SENIORITY_RANK) return nonDmCount; // the DM node's index in the full functions array
+  return Math.min(rank, nonDmCount - 1);
+}
+
 export const QUESTION_BANK: Record<string, string[]> = {
   Finance: [
     'Who owns the budget for this?',
