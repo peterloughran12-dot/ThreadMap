@@ -88,7 +88,7 @@ export default function AccountListClient({ accounts }: { accounts: AccountWithP
                 <h3 className="font-display text-base font-bold truncate pr-2">{a.company_name}</h3>
                 <span className={clsx('pill shrink-0', STATUS_COLORS[a.status])}>{a.status}</span>
               </div>
-              <p className="text-xs text-text-muted mb-4">{a.industry || 'No industry set'}</p>
+              <p className="text-xs text-text-muted mb-4">{a.relevant_function || 'No function set'}</p>
 
               <div className="mb-3">
                 <div className="flex items-center justify-between text-xs text-text-muted mb-1">

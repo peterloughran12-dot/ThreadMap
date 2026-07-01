@@ -27,7 +27,7 @@ create table accounts (
   team_id uuid references teams(id) on delete cascade,
   owner_id uuid references users(id),
   company_name text not null,
-  industry text,
+  relevant_function text, -- the vertical being sold into (e.g. "EHS"), not the target company's industry
   website text,
   dm_role text not null default 'Head of Department',
   status text not null default 'active', -- active | won | lost | paused

@@ -6,7 +6,7 @@ export interface Account {
   team_id: string;
   owner_id: string | null;
   company_name: string;
-  industry: string | null;
+  relevant_function: string | null;
   website: string | null;
   dm_role: string;
   status: AccountStatus;

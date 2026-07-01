@@ -1,37 +1,57 @@
-export const INDUSTRIES = [
-  'Manufacturing',
-  'SaaS / Tech',
-  'Financial Services',
-  'Healthcare',
-  'Retail',
+// The function/vertical you're actually selling into (e.g. EHS software
+// buyers), not the target company's overall industry. A roadmap maps the
+// reporting chain within this one vertical, bottom-up to its decision maker
+// -- not unrelated departments like Finance or HR that a specific deal may
+// never touch.
+export const RELEVANT_FUNCTIONS = [
+  'EHS',
+  'IT & Security',
+  'Finance & Accounting',
+  'HR & Payroll',
+  'Procurement',
+  'Legal & Compliance',
+  'Marketing',
+  'Operations',
   'Custom',
 ] as const;
 
-export type Industry = (typeof INDUSTRIES)[number];
+export type RelevantFunction = (typeof RELEVANT_FUNCTIONS)[number];
 
-export const FUNCTION_PRESETS: Record<Industry, string[]> = {
-  Manufacturing: ['Finance', 'Operations', 'EHS', 'Procurement', 'IT / Tech', 'HR'],
-  'SaaS / Tech': ['Finance', 'IT / Tech', 'Operations', 'Legal', 'Marketing', 'Procurement'],
-  'Financial Services': ['Finance', 'Operations', 'Legal', 'IT / Tech', 'HR', 'Risk'],
-  Healthcare: ['Operations', 'Finance', 'HR', 'Legal', 'IT / Tech', 'Procurement'],
-  Retail: ['Operations', 'Finance', 'Marketing', 'Procurement', 'IT / Tech', 'HR'],
-  Custom: ['Finance', 'Operations', 'IT / Tech', 'Procurement', 'HR'],
-};
-
-export const FUNCTION_EMOJI: Record<string, string> = {
-  Finance: '💰',
-  'IT / Tech': '💻',
-  Operations: '⚙️',
-  Procurement: '📋',
+export const RELEVANT_FUNCTION_EMOJI: Record<string, string> = {
   EHS: '🦺',
-  HR: '👥',
-  Legal: '⚖️',
+  'IT & Security': '💻',
+  'Finance & Accounting': '💰',
+  'HR & Payroll': '👥',
+  Procurement: '📋',
+  'Legal & Compliance': '⚖️',
   Marketing: '📣',
-  Risk: '🛡️',
-  'C-Suite': '🏢',
+  Operations: '⚙️',
 };
+const DEFAULT_VERTICAL_EMOJI = '🏢';
 
 export const DM_NODE_EMOJI = '🎯';
+
+export const HIERARCHY_LEVEL_COUNTS = [2, 3, 4, 5] as const;
+
+// Bottom-up seniority ladder for the levels below the decision maker. Sliced
+// from the front for shorter chains, so a 2-level chain is just
+// [Coordinator, <DM role>], a 5-level chain uses all four rungs below the DM.
+const HIERARCHY_RUNGS = ['Coordinator', 'Supervisor', 'Manager', 'Director'];
+
+export function buildHierarchyLevels(
+  vertical: string,
+  levelCount: number,
+  dmRole: string
+): { name: string; emoji: string; isDm: boolean }[] {
+  const emoji = RELEVANT_FUNCTION_EMOJI[vertical] ?? DEFAULT_VERTICAL_EMOJI;
+  const rungCount = Math.max(0, levelCount - 1);
+  const rungs = HIERARCHY_RUNGS.slice(0, rungCount).map((rung) => ({
+    name: `${vertical} ${rung}`,
+    emoji,
+    isDm: false,
+  }));
+  return [...rungs, { name: dmRole || `VP of ${vertical}`, emoji: DM_NODE_EMOJI, isDm: true }];
+}
 
 export const QUESTION_BANK: Record<string, string[]> = {
   Finance: [

@@ -76,7 +76,7 @@ export async function POST(request: Request) {
 
   const prompt = `You are an expert B2B enterprise sales strategist.
 
-A salesperson has been mapping the account "${account.company_name}" in the "${account.industry}" sector and is preparing to approach the ${account.dm_role}.
+A salesperson has been mapping the ${account.relevant_function} buying committee at "${account.company_name}" and is preparing to approach the ${account.dm_role}.
 
 Here is the intel they gathered across functions:
 

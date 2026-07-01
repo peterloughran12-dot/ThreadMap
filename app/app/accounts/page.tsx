@@ -9,7 +9,7 @@ export default async function AccountsPage() {
   const { data: accounts } = await supabase
     .from('accounts')
     .select(
-      `id, team_id, owner_id, company_name, industry, website, dm_role, status, created_at, updated_at,
+      `id, team_id, owner_id, company_name, relevant_function, website, dm_role, status, created_at, updated_at,
        account_functions ( id, is_dm_node, intel_notes ( is_complete ) )`
     )
     .order('updated_at', { ascending: false });
@@ -25,7 +25,7 @@ export default async function AccountsPage() {
       team_id: a.team_id,
       owner_id: a.owner_id,
       company_name: a.company_name,
-      industry: a.industry,
+      relevant_function: a.relevant_function,
       website: a.website,
       dm_role: a.dm_role,
       status: a.status,

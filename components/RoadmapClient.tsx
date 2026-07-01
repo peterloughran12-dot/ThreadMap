@@ -43,7 +43,7 @@ export default function RoadmapClient({
         <div>
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="font-display text-2xl font-bold">{account.company_name}</h1>
-            <span className="pill border border-border text-text-muted">{account.industry}</span>
+            <span className="pill border border-border text-text-muted">{account.relevant_function}</span>
           </div>
           <p className="text-sm text-text-muted mt-1">
             Approaching: <span className="text-text-primary">{account.dm_role}</span>
