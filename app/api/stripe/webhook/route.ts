@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import Stripe from 'stripe';
-import { stripe } from '@/lib/stripe';
+import { getStripe } from '@/lib/stripe';
 import { createServiceRoleClient } from '@/lib/supabase/server';
 
 function planFromPriceId(priceId: string | undefined): 'pro' | 'team' | 'free' {
@@ -11,6 +11,7 @@ function planFromPriceId(priceId: string | undefined): 'pro' | 'team' | 'free' {
 }
 
 export async function POST(request: Request) {
+  const stripe = getStripe();
   const body = await request.text();
   const signature = (await headers()).get('stripe-signature');
 

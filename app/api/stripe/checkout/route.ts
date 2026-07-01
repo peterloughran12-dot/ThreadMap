@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { stripe } from '@/lib/stripe';
+import { getStripe } from '@/lib/stripe';
 
 // Not in the original spec's API list, but required to get a team from
 // free -> paid before the Stripe customer portal has anything to manage.
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Team not found.' }, { status: 404 });
   }
 
-  const session = await stripe.checkout.sessions.create({
+  const session = await getStripe().checkout.sessions.create({
     mode: 'subscription',
     customer: team.stripe_customer_id ?? undefined,
     customer_email: team.stripe_customer_id ? undefined : profile?.email ?? undefined,
