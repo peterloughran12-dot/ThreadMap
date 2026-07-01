@@ -1,0 +1,168 @@
+'use client';
+
+import { useState } from 'react';
+import clsx from 'clsx';
+import { createClient } from '@/lib/supabase/client';
+import {
+  CONTACT_STATUS_LABEL,
+  INTEL_COMPLETE_MIN_CHARS,
+  NEXT_CONTACT_STATUS,
+  computeFunctionState,
+} from '@/lib/constants';
+import type { ContactStatus } from '@/lib/types';
+import type { FunctionWithData } from '@/components/RoadmapClient';
+import AddContactModal from '@/components/AddContactModal';
+
+const STATUS_PILL: Record<ContactStatus, string> = {
+  new: 'bg-text-faint/20 text-text-muted',
+  contacted: 'bg-gold/15 text-gold',
+  intel_captured: 'bg-green/15 text-green',
+};
+
+export default function FunctionDetailPanel({
+  accountId,
+  fn,
+  onChanged,
+}: {
+  accountId: string;
+  fn: FunctionWithData;
+  onChanged: () => void;
+}) {
+  const supabase = createClient();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [note, setNote] = useState(fn.intel_notes?.[0]?.content ?? '');
+  const [savingNote, setSavingNote] = useState(false);
+  const [savedFlash, setSavedFlash] = useState(false);
+
+  const state = computeFunctionState((fn.contacts?.length ?? 0) > 0, !!fn.intel_notes?.[0]?.is_complete);
+  const isComplete = note.trim().length >= INTEL_COMPLETE_MIN_CHARS;
+
+  async function cycleStatus(contactId: string, current: ContactStatus) {
+    const next = NEXT_CONTACT_STATUS[current];
+    await supabase.from('contacts').update({ status: next }).eq('id', contactId);
+    onChanged();
+  }
+
+  async function removeContact(contactId: string) {
+    await supabase.from('contacts').delete().eq('id', contactId);
+    onChanged();
+  }
+
+  async function saveNote() {
+    setSavingNote(true);
+    await supabase.from('intel_notes').upsert(
+      {
+        function_id: fn.id,
+        content: note,
+        is_complete: note.trim().length >= INTEL_COMPLETE_MIN_CHARS,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'function_id' }
+    );
+    setSavingNote(false);
+    setSavedFlash(true);
+    setTimeout(() => setSavedFlash(false), 1500);
+    onChanged();
+  }
+
+  const stateLabel: Record<string, { text: string; className: string }> = {
+    empty: { text: 'Not started', className: 'bg-text-faint/20 text-text-muted' },
+    in_progress: { text: 'In progress', className: 'bg-gold/15 text-gold' },
+    complete: { text: 'Complete', className: 'bg-green/15 text-green' },
+  };
+
+  return (
+    <div className="card p-5">
+      <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center gap-2">
+          <span className="text-2xl">{fn.emoji}</span>
+          <h2 className="font-display text-lg font-bold">{fn.function_name}</h2>
+        </div>
+        <span className={clsx('pill', stateLabel[state].className)}>{stateLabel[state].text}</span>
+      </div>
+
+      {/* Contacts */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-text-muted">
+            Contacts ({fn.contacts?.length ?? 0})
+          </h3>
+          <button onClick={() => setModalOpen(true)} className="btn-ghost !px-3 !py-1 text-xs">
+            + Add contact
+          </button>
+        </div>
+
+        {(fn.contacts?.length ?? 0) === 0 ? (
+          <div className="rounded-control border border-dashed border-border p-6 text-center text-sm text-text-faint">
+            No contacts yet. Pull them from ZoomInfo or Lusha.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {fn.contacts.map((c) => (
+              <div key={c.id} className="rounded-control border border-border bg-surface-elevated p-3">
+                <div className="flex items-start justify-between gap-2 mb-1">
+                  <p className="text-sm font-medium truncate">{c.full_name}</p>
+                  <button
+                    onClick={() => removeContact(c.id)}
+                    className="text-text-faint hover:text-red text-xs shrink-0"
+                    aria-label={`Remove ${c.full_name}`}
+                  >
+                    ✕
+                  </button>
+                </div>
+                <p className="text-xs text-text-muted truncate mb-2">{c.job_title || 'No title'}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] text-text-faint">{c.source}</span>
+                  <button
+                    onClick={() => cycleStatus(c.id, c.status)}
+                    className={clsx('pill text-[10px]', STATUS_PILL[c.status])}
+                    title="Click to advance status"
+                  >
+                    {CONTACT_STATUS_LABEL[c.status]}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Intel note */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-text-muted">Intel captured</h3>
+          <span className={clsx('text-[11px] font-mono', isComplete ? 'text-green' : 'text-text-faint')}>
+            {note.trim().length} chars {isComplete && '\u2713 complete'}
+          </span>
+        </div>
+        <textarea
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+          onBlur={saveNote}
+          rows={6}
+          placeholder="What did you learn from this function? Budget owner, pain points, timing, politics…"
+          className="input resize-none font-body"
+        />
+        <div className="flex items-center justify-between mt-2">
+          <span className="text-xs text-text-faint">
+            {isComplete ? 'Marked complete once saved.' : `${INTEL_COMPLETE_MIN_CHARS} chars needed to mark complete.`}
+          </span>
+          <button onClick={saveNote} disabled={savingNote} className="btn-ghost !px-3 !py-1 text-xs">
+            {savingNote ? 'Saving…' : savedFlash ? 'Saved ✓' : 'Save'}
+          </button>
+        </div>
+      </div>
+
+      {modalOpen && (
+        <AddContactModal
+          functionId={fn.id}
+          onClose={() => setModalOpen(false)}
+          onAdded={() => {
+            setModalOpen(false);
+            onChanged();
+          }}
+        />
+      )}
+    </div>
+  );
+}
