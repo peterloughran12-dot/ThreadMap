@@ -19,7 +19,7 @@ const FEATURES = [
   },
   {
     title: 'Intel capture',
-    body: 'Log what you learn after every call. Budget owners, timelines, politics \u2014 all in one place per function.',
+    body: 'Log what you learn after every call. Budget owners, timelines, politics — all in one place per function.',
   },
   {
     title: 'AI briefing',
@@ -74,7 +74,7 @@ export default function MarketingPage() {
           </h1>
           <p className="text-lg text-[#5C6470] mt-5 max-w-xl leading-relaxed">
             Most reps cold-call the decision maker blind. ThreadMap has you talk to Finance, Ops, and
-            IT first \u2014 then hands you a briefing built from what you actually learned.
+            IT first — then hands you a briefing built from what you actually learned.
           </p>
           <div className="mt-8 flex items-center gap-4">
             <Link
@@ -106,7 +106,7 @@ export default function MarketingPage() {
                   🎯
                 </div>
                 <span className="mt-2 text-[11px] font-mono text-[#F59E0B] font-semibold">
-                  DM \u2014 unlocked
+                  DM — unlocked
                 </span>
               </div>
             </div>
@@ -144,7 +144,7 @@ export default function MarketingPage() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
             {[
-              { n: '01', title: 'Map functions', body: 'Add a target company and ThreadMap lays out the functions you need to cover \u2014 Finance, Ops, IT, and more.' },
+              { n: '01', title: 'Map functions', body: 'Add a target company and ThreadMap lays out the functions you need to cover — Finance, Ops, IT, and more.' },
               { n: '02', title: 'Build context', body: 'Add contacts per function, log intel after every call, and watch each node turn from empty to complete.' },
               { n: '03', title: 'Approach the DM', body: 'Once you\u2019ve covered enough ground, generate a briefing built from the real intel you gathered.' },
             ].map((step) => (
