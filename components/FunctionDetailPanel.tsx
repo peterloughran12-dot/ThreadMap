@@ -42,6 +42,8 @@ export default function FunctionDetailPanel({
   const [note, setNote] = useState(fn.intel_notes?.content ?? '');
   const [savingNote, setSavingNote] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
+  const [summarizing, setSummarizing] = useState(false);
+  const [summaryError, setSummaryError] = useState('');
 
   const state = computeFunctionState((fn.contacts?.length ?? 0) > 0, !!fn.intel_notes?.is_complete);
   const isComplete = note.trim().length >= INTEL_COMPLETE_MIN_CHARS;
@@ -73,6 +75,30 @@ export default function FunctionDetailPanel({
     setTimeout(() => setSavedFlash(false), 1500);
     onChanged();
   }
+
+  async function handleGenerateSummary() {
+    setSummarizing(true);
+    setSummaryError('');
+    try {
+      const res = await fetch('/api/generate-function-summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ functionId: fn.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setSummaryError(data.error || 'Something went wrong.');
+        return;
+      }
+      setNote(data.summary);
+    } catch {
+      setSummaryError('Network error. Try again.');
+    } finally {
+      setSummarizing(false);
+    }
+  }
+
+  const contactsWithContext = (fn.contacts ?? []).filter((c) => contextFilledCount(c) > 0).length;
 
   const stateLabel: Record<string, { text: string; className: string }> = {
     empty: { text: 'Not started', className: 'bg-text-faint/20 text-text-muted' },
@@ -169,6 +195,21 @@ export default function FunctionDetailPanel({
             {note.trim().length} chars {isComplete && '\u2713 complete'}
           </span>
         </div>
+        <div className="flex items-center justify-between gap-3 mb-2">
+          <span className="text-xs text-text-faint">
+            {contactsWithContext > 0
+              ? `Builds a summary from ${contactsWithContext} contact${contactsWithContext === 1 ? '' : 's'} with context captured.`
+              : 'Fill in a contact’s Context first, then generate a summary from it.'}
+          </span>
+          <button
+            onClick={handleGenerateSummary}
+            disabled={summarizing || contactsWithContext === 0}
+            className="btn-ghost !px-3 !py-1 text-xs shrink-0"
+            title={contactsWithContext === 0 ? 'No contact context captured yet' : undefined}
+          >
+            {summarizing ? 'Writing…' : '✨ Generate from contacts'}
+          </button>
+        </div>
         <textarea
           value={note}
           onChange={(e) => setNote(e.target.value)}
@@ -177,6 +218,7 @@ export default function FunctionDetailPanel({
           placeholder="What did you learn from this function? Budget owner, pain points, timing, politics…"
           className="input resize-none font-body"
         />
+        {summaryError && <p className="text-xs text-red mt-2">{summaryError}</p>}
         <div className="flex items-center justify-between mt-2">
           <span className="text-xs text-text-faint">
             {isComplete ? 'Marked complete once saved.' : `${INTEL_COMPLETE_MIN_CHARS} chars needed to mark complete.`}
