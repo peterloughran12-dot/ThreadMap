@@ -39,7 +39,7 @@ export default function MarketingPage() {
       {/* Nav */}
       <header className="border-b border-[#E6E8EC]">
         <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
-          <span className="font-display text-lg font-bold tracking-tight">ThreadMap</span>
+          <span className="font-display text-lg font-bold tracking-tight">Weev</span>
           <nav className="flex items-center gap-3">
             <Link href="/login" className="text-sm text-[#5C6470] hover:text-[#12151A] transition-colors">
               Log in
@@ -73,7 +73,7 @@ export default function MarketingPage() {
             Map the org before you call the DM.
           </h1>
           <p className="text-lg text-[#5C6470] mt-5 max-w-xl leading-relaxed">
-            Most reps cold-call the decision maker blind. ThreadMap has you talk to Finance, Ops, and
+            Most reps cold-call the decision maker blind. Weev has you talk to Finance, Ops, and
             IT first — then hands you a briefing built from what you actually learned.
           </p>
           <div className="mt-8 flex items-center gap-4">
@@ -144,7 +144,7 @@ export default function MarketingPage() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
             {[
-              { n: '01', title: 'Map functions', body: 'Add a target company and ThreadMap lays out the functions you need to cover — Finance, Ops, IT, and more.' },
+              { n: '01', title: 'Map functions', body: 'Add a target company and Weev lays out the functions you need to cover — Finance, Ops, IT, and more.' },
               { n: '02', title: 'Build context', body: 'Add contacts per function, log intel after every call, and watch each node turn from empty to complete.' },
               { n: '03', title: 'Approach the DM', body: 'Once you\u2019ve covered enough ground, generate a briefing built from the real intel you gathered.' },
             ].map((step) => (
@@ -239,7 +239,7 @@ export default function MarketingPage() {
 
       <footer className="border-t border-[#E6E8EC]">
         <div className="mx-auto max-w-6xl px-6 py-8 flex items-center justify-between text-sm text-[#8C94A3]">
-          <span>ThreadMap</span>
+          <span>Weev</span>
           <span className="font-mono text-xs">Map the org before you call the DM.</span>
         </div>
       </footer>

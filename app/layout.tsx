@@ -11,9 +11,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'ThreadMap — Map the org before you call the DM',
+  title: 'Weev — Map the org before you call the DM',
   description:
-    'ThreadMap helps B2B sales reps map target accounts function by function, capture intel, and walk into decision-maker conversations with real context.',
+    'Weev helps B2B sales reps map target accounts function by function, capture intel, and walk into decision-maker conversations with real context.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

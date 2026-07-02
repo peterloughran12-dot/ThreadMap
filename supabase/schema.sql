@@ -1,4 +1,4 @@
--- ThreadMap database schema
+-- Weev database schema
 -- Run this in the Supabase SQL editor.
 
 -- Teams (one per company/subscription)

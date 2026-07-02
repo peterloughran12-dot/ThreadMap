@@ -42,7 +42,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-bg flex items-center justify-center px-4">
       <div className="w-full max-w-sm animate-fade-in">
         <Link href="/" className="block text-center mb-8 font-display text-2xl font-bold text-text-primary">
-          ThreadMap
+          Weev
         </Link>
         <div className="card p-6">
           <h1 className="font-display text-xl font-bold mb-1">Log in</h1>
@@ -89,7 +89,7 @@ export default function LoginPage() {
           )}
         </div>
         <p className="text-center text-sm text-text-muted mt-6">
-          New to ThreadMap?{' '}
+          New to Weev?{' '}
           <Link href="/signup" className="text-indigo hover:underline">
             Create an account
           </Link>
