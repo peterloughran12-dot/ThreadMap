@@ -13,7 +13,8 @@ export default async function AccountRoadmapPage({ params }: { params: Promise<{
     .from('account_functions')
     .select(
       `id, account_id, function_name, emoji, sequence_order, is_dm_node,
-       contacts ( id, function_id, full_name, job_title, email, phone, linkedin_url, source, status, last_contacted_at, created_at ),
+       contacts ( id, function_id, full_name, job_title, email, phone, linkedin_url, source, status, last_contacted_at,
+         pain_point, current_solution, budget, change_driver, quirk, created_at ),
        intel_notes ( id, function_id, content, is_complete, updated_at )`
     )
     .eq('account_id', id)

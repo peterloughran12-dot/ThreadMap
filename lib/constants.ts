@@ -163,6 +163,21 @@ export const CONTACT_STATUS_LABEL: Record<ContactStatus, string> = {
 export const ACCOUNT_STATUSES = ['active', 'won', 'lost', 'paused'] as const;
 export type AccountStatus = (typeof ACCOUNT_STATUSES)[number];
 
+// The standard questions a BDR builds context on for each contact over
+// however many calls it takes. One evolving answer per field, not a log.
+export const CONTACT_CONTEXT_FIELDS = [
+  { key: 'pain_point', label: 'Pain point', placeholder: 'What’s actually broken for them today?' },
+  { key: 'current_solution', label: 'Current solution', placeholder: 'What are they using/doing instead right now?' },
+  { key: 'budget', label: 'Budget', placeholder: 'Range, timing, who signs off?' },
+  { key: 'change_driver', label: 'Change driver', placeholder: 'What’s forcing them to act now?' },
+  {
+    key: 'quirk',
+    label: 'Quirk',
+    placeholder: 'Personal/relationship context — leave coming up, out sick, leaving the company soon…',
+  },
+] as const;
+export type ContactContextField = (typeof CONTACT_CONTEXT_FIELDS)[number]['key'];
+
 export const INTEL_COMPLETE_MIN_CHARS = 30;
 export const READY_FOR_BRIEFING_THRESHOLD = 0.6; // 60%
 

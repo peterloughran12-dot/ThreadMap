@@ -34,6 +34,11 @@ export interface Contact {
   source: string | null;
   status: ContactStatus;
   last_contacted_at: string | null;
+  pain_point: string | null;
+  current_solution: string | null;
+  budget: string | null;
+  change_driver: string | null;
+  quirk: string | null;
   created_at: string;
 }
 

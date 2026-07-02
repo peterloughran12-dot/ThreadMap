@@ -58,6 +58,14 @@ create table contacts (
   source text, -- ZoomInfo | Lusha | LinkedIn | Referral
   status text not null default 'new', -- new | contacted | intel_captured
   last_contacted_at timestamptz,
+  -- Call-context template: the standard questions a BDR builds up on this
+  -- specific person over however many calls it takes. One evolving answer
+  -- per field, not a per-call log.
+  pain_point text,
+  current_solution text,
+  budget text,
+  change_driver text,
+  quirk text, -- personal/relationship context - leave coming up, out sick, etc.
   created_at timestamptz default now()
 );
 

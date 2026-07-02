@@ -4,15 +4,21 @@ import { useState } from 'react';
 import clsx from 'clsx';
 import { createClient } from '@/lib/supabase/client';
 import {
+  CONTACT_CONTEXT_FIELDS,
   CONTACT_STATUS_LABEL,
   INTEL_COMPLETE_MIN_CHARS,
   NEXT_CONTACT_STATUS,
   computeFunctionState,
 } from '@/lib/constants';
-import type { ContactStatus } from '@/lib/types';
+import type { Contact, ContactStatus } from '@/lib/types';
 import type { FunctionWithData } from '@/components/RoadmapClient';
 import AddContactModal from '@/components/AddContactModal';
 import ImportContactsModal from '@/components/ImportContactsModal';
+import ContactContextModal from '@/components/ContactContextModal';
+
+function contextFilledCount(c: Contact) {
+  return CONTACT_CONTEXT_FIELDS.filter((f) => (c[f.key] ?? '').trim().length > 0).length;
+}
 
 const STATUS_PILL: Record<ContactStatus, string> = {
   new: 'bg-text-faint/20 text-text-muted',
@@ -32,6 +38,7 @@ export default function FunctionDetailPanel({
   const supabase = createClient();
   const [modalOpen, setModalOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
+  const [contextContact, setContextContact] = useState<Contact | null>(null);
   const [note, setNote] = useState(fn.intel_notes?.content ?? '');
   const [savingNote, setSavingNote] = useState(false);
   const [savedFlash, setSavedFlash] = useState(false);
@@ -127,7 +134,7 @@ export default function FunctionDetailPanel({
                     📞 {c.phone}
                   </a>
                 )}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-2">
                   <span className="text-[10px] text-text-faint">{c.source}</span>
                   <button
                     onClick={() => cycleStatus(c.id, c.status)}
@@ -137,6 +144,17 @@ export default function FunctionDetailPanel({
                     {CONTACT_STATUS_LABEL[c.status]}
                   </button>
                 </div>
+                <button
+                  onClick={() => setContextContact(c)}
+                  className={clsx(
+                    'w-full rounded-control border px-2 py-1 text-[11px] font-medium transition-colors',
+                    contextFilledCount(c) > 0
+                      ? 'border-green/30 bg-green/10 text-green hover:bg-green/15'
+                      : 'border-border text-text-muted hover:bg-surface'
+                  )}
+                >
+                  Context {contextFilledCount(c)}/{CONTACT_CONTEXT_FIELDS.length}
+                </button>
               </div>
             ))}
           </div>
@@ -186,6 +204,17 @@ export default function FunctionDetailPanel({
           onClose={() => setImportOpen(false)}
           onImported={() => {
             setImportOpen(false);
+            onChanged();
+          }}
+        />
+      )}
+
+      {contextContact && (
+        <ContactContextModal
+          contact={contextContact}
+          onClose={() => setContextContact(null)}
+          onSaved={() => {
+            setContextContact(null);
             onChanged();
           }}
         />
