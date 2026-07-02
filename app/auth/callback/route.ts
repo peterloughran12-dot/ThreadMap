@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server';
 
 // Handles both magic-link and OAuth redirects. On first login for a given
-// auth user, creates the `teams` and `users` rows Weev needs.
+// auth user, creates the `teams` and `users` rows weev needs.
 //
 // This bootstrap step uses the service-role client (bypasses RLS) because a
 // brand-new user isn't linked to a team yet, so the regular session client

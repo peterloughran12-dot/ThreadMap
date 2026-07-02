@@ -1,4 +1,4 @@
--- Weev database schema
+-- weev database schema
 -- Run this in the Supabase SQL editor.
 
 -- Teams (one per company/subscription)

@@ -53,10 +53,10 @@ export async function POST(request: Request) {
 
   try {
     await resend.emails.send({
-      from: 'Weev <onboarding@resend.dev>',
+      from: 'weev <onboarding@resend.dev>',
       to: email,
-      subject: `You've been invited to ${team.name} on Weev`,
-      html: `<p>You've been invited to join <strong>${team.name}</strong> on Weev. Check your inbox for a separate sign-in link to get started.</p>`,
+      subject: `You've been invited to ${team.name} on weev`,
+      html: `<p>You've been invited to join <strong>${team.name}</strong> on weev. Check your inbox for a separate sign-in link to get started.</p>`,
     });
   } catch (err) {
     console.error('Resend invite email failed', err);

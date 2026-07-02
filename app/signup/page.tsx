@@ -53,7 +53,7 @@ export default function SignupPage() {
     <div className="min-h-screen bg-bg flex items-center justify-center px-4">
       <div className="w-full max-w-sm animate-fade-in">
         <Link href="/" className="block text-center mb-8 font-display text-2xl font-bold text-text-primary">
-          Weev
+          weev
         </Link>
         <div className="card p-6">
           <h1 className="font-display text-xl font-bold mb-1">Create your account</h1>

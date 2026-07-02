@@ -25,7 +25,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
           <div className="flex items-center gap-6">
             <Link href="/app/accounts" className="font-display text-lg font-bold">
-              Weev
+              weev
             </Link>
             <nav className="hidden sm:flex items-center gap-1 text-sm">
               <Link

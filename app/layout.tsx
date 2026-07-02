@@ -11,9 +11,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Weev — Map the org before you call the DM',
+  title: 'weev — Map the org before you call the DM',
   description:
-    'Weev helps B2B sales reps map target accounts function by function, capture intel, and walk into decision-maker conversations with real context.',
+    'weev helps B2B sales reps map target accounts function by function, capture intel, and walk into decision-maker conversations with real context.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

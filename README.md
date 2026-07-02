@@ -1,4 +1,4 @@
-# Weev
+# weev
 
 B2B account mapping tool. Map a target company into functions, add contacts,
 capture intel per function, and generate an AI briefing once you're ready to
