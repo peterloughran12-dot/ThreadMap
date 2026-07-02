@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     .from('account_functions')
     .select(
       `id, function_name, is_dm_node, sequence_order,
-       contacts ( full_name, job_title ),
+       contacts ( full_name, job_title, pain_point, current_solution, budget, change_driver, quirk ),
        intel_notes ( content, is_complete )`
     )
     .eq('account_id', accountId)
@@ -64,11 +64,22 @@ export async function POST(request: Request) {
 
   const functionsBlock = nonDm
     .map((f: any) => {
-      const contactList = (f.contacts ?? [])
-        .map((c: any) => `${c.full_name}${c.job_title ? ` (${c.job_title})` : ''}`)
-        .join(', ');
+      const contacts = f.contacts ?? [];
+      const contactDetails = contacts.length
+        ? contacts
+            .map((c: any) => {
+              const lines = [`- ${c.full_name}${c.job_title ? ` (${c.job_title})` : ''}`];
+              if (c.pain_point?.trim()) lines.push(`  Pain point: ${c.pain_point.trim()}`);
+              if (c.current_solution?.trim()) lines.push(`  Current solution: ${c.current_solution.trim()}`);
+              if (c.budget?.trim()) lines.push(`  Budget: ${c.budget.trim()}`);
+              if (c.change_driver?.trim()) lines.push(`  Change driver: ${c.change_driver.trim()}`);
+              if (c.quirk?.trim()) lines.push(`  Personal/rapport note: ${c.quirk.trim()}`);
+              return lines.join('\n');
+            })
+            .join('\n')
+        : 'None logged';
       const intel = f.intel_notes?.content?.trim();
-      return `FUNCTION: ${f.function_name}\nContacts spoken to: ${contactList || 'None logged'}\nIntel captured:\n${
+      return `FUNCTION: ${f.function_name}\nContacts spoken to:\n${contactDetails}\nGeneral intel captured for this function:\n${
         intel || 'No intel captured.'
       }`;
     })
@@ -103,6 +114,9 @@ A specific, informed opening for the first conversation. Reference actual intel 
 
 6. WATCH OUTS
 Political or structural risks. Who might block this deal. Timing considerations.
+
+7. RAPPORT NOTES
+Per-contact personal/relationship context worth keeping in mind for future conversations with each specific person — timing to avoid or lean into (leave, illness, someone leaving the company), and anything else that helps build a real relationship, not just close this one deal. Only include this section if there is at least one personal/rapport note in the intel above; omit it entirely otherwise.
 
 Be direct, specific, and practical. No filler. This is a working sales document, not a presentation.`;
 
